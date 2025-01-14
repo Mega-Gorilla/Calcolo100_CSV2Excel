@@ -1,5 +1,7 @@
 # Calcolo100 CSV Converter
 
+![アプリケーションのメイン画面](https://raw.githubusercontent.com/Mega-Gorilla/Calcolo100_CSV2Excel/refs/heads/main/images/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202025-01-14%20222035.png?token=GHSAT0AAAAAACWMXVDVVGIMSWSXVKLOMIEIZ4GMV7A)
+
 Nipo製計算タイムレコーダー カルコロ100向けのCSV変換ツールです。本ツールは、有志による制作であり、公式に配布しているものではありません。
 
 ## 機能概要
