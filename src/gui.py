@@ -49,7 +49,7 @@ class TimecardGUI(QMainWindow):
 
     def init_ui(self):
         """GUIの初期化"""
-        self.setWindowTitle('タイムカード処理ツール')
+        self.setWindowTitle('Calcolo 100 CSV2Excel')
         self.setGeometry(100, 100, 800, 600)
 
         # メインウィジェットとレイアウト
