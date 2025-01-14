@@ -34,7 +34,7 @@ Nipo製計算タイムレコーダー カルコロ100向けのCSV変換ツール
 ### GUIアプリケーションの起動
 
 ```bash
-python src/gui.py
+python app.py
 ```
 
 ### 基本的な操作手順
