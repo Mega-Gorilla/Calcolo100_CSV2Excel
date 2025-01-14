@@ -24,7 +24,7 @@ Nipo製計算タイムレコーダー カルコロ100向けのCSV変換ツール
 
 1. リポジトリをクローン:
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/Mega-Gorilla/Calcolo100_CSV2Excel.git
    cd Calcolo100_CSV2Excel
    ```
 
