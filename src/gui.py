@@ -147,33 +147,52 @@ class TimecardGUI(QMainWindow):
             self.load_mapping_file(file_path)
 
     def load_mapping_file(self, file_path):
-        """マッピングファイルを読み込んでテーブルに表示"""
-        try:
-            df = pd.read_csv(file_path)
-            self.mapping_table.setRowCount(len(df))
-            
-            for i, row in df.iterrows():
-                # カード番号を4桁にゼロ埋め
-                card_no = str(row[0]).zfill(4)
-                self.mapping_table.setItem(i, 0, QTableWidgetItem(card_no))
-                self.mapping_table.setItem(i, 1, QTableWidgetItem(str(row[1])))
+        """マッピングファイルを読み込んでテーブルに表示（複数エンコーディングに対応）"""
+        encodings = ['utf-8', 'cp932', 'shift_jis', 'shift_jisx0213']
+        
+        for encoding in encodings:
+            try:
+                df = pd.read_csv(file_path, encoding=encoding)
                 
-            self.log_window.append(f"マッピングファイルを読み込みました: {len(df)}件")
-        except Exception as e:
-            QMessageBox.critical(self, 'エラー', f'マッピングファイルの読み込みに失敗しました: {str(e)}')
+                # カラム名を確認して設定
+                if len(df.columns) < 2:
+                    raise ValueError("CSVファイルには2列（カード番号と名前）が必要です")
+                
+                card_col = df.columns[0]  # カード番号列
+                name_col = df.columns[1]  # 名前列
+                
+                self.mapping_table.setRowCount(len(df))
+                
+                for i, row in df.iterrows():
+                    # カード番号を4桁にゼロ埋め
+                    card_no = str(row[card_col]).zfill(4)
+                    self.mapping_table.setItem(i, 0, QTableWidgetItem(card_no))
+                    self.mapping_table.setItem(i, 1, QTableWidgetItem(str(row[name_col])))
+                
+                self.log_window.append(f"マッピングファイルを読み込みました: {len(df)}件 (エンコーディング: {encoding})")
+                return  # 成功したら終了
+            except UnicodeDecodeError:
+                continue  # 次のエンコーディングを試す
+            except Exception as e:
+                QMessageBox.critical(self, 'エラー', f'マッピングファイルの読み込みに失敗しました: {str(e)}')
+                return
+        
+        # すべてのエンコーディングで失敗した場合
+        QMessageBox.critical(self, 'エラー', 'ファイルの読み込みに失敗しました。\nサポートされていないエンコーディングの可能性があります。')
 
     def save_mapping(self):
-        """マッピングテーブルの内容を保存"""
+        """マッピングテーブルの内容を保存（CP932で保存）"""
         try:
             data = []
             for row in range(self.mapping_table.rowCount()):
-                card_no = self.mapping_table.item(row, 0).text().strip()
-                name = self.mapping_table.item(row, 1).text().strip()
-                if card_no and name:  # 空の行は保存しない
-                    data.append([card_no, name])
+                if self.mapping_table.item(row, 0) and self.mapping_table.item(row, 1):
+                    card_no = self.mapping_table.item(row, 0).text().strip()
+                    name = self.mapping_table.item(row, 1).text().strip()
+                    if card_no and name:  # 空の行は保存しない
+                        data.append([card_no, name])
             
             df = pd.DataFrame(data, columns=['カード番号', '名前'])
-            df.to_csv(self.mapping_path.text(), index=False)
+            df.to_csv(self.mapping_path.text(), index=False, encoding='cp932')
             self.log_window.append("マッピングファイルを保存しました")
         except Exception as e:
             QMessageBox.critical(self, 'エラー', f'マッピングファイルの保存に失敗しました: {str(e)}')
